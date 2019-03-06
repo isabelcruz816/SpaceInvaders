@@ -56,6 +56,7 @@ public class Game implements Runnable {
     private Bullet playerBullet;
     private Bullet enemyBullet;
     private Player player;
+    private Enemy enemy;
     
     /**
      * The game timers
@@ -142,6 +143,7 @@ public class Game implements Runnable {
         playerBullet = new Bullet(400, 400, 5, 5, -5);
         enemyBullet = new Bullet(200, 100, 3, 16, 5);
         player = new Player((getWidth() / 2) - 24, 540, 48, 48, this);
+        enemy = new Enemy(Util.randNum(0, getWidth()), 200, 75, 75, this);
     }
 
     /**
@@ -178,6 +180,7 @@ public class Game implements Runnable {
         playerBullet.update();
         enemyBullet.update();
         player.update();
+        enemy.update();
         
        // update input
         getKeyManager().update();
@@ -203,6 +206,7 @@ public class Game implements Runnable {
             player.render(g);
             playerBullet.render(g);
             enemyBullet.render(g);
+            enemy.render(g);
             
             // actually render the whole scene
             bs.show();

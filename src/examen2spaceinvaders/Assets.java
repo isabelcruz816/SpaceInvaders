@@ -17,6 +17,7 @@ public class Assets {
     public static BufferedImage playerBullet;
     public static BufferedImage enemyBullet;
     public static BufferedImage player;
+    public static BufferedImage enemy;
     
     /**
      * Audio that will be used by the game.
@@ -29,5 +30,6 @@ public class Assets {
         playerBullet = ImageLoader.loadImage("/images/playerBullet.png");
         enemyBullet = ImageLoader.loadImage("/images/enemyBullet.png");
         player = ImageLoader.loadImage("/images/spaceship.png");
+        enemy = ImageLoader.loadImage("/images/alien.png");
     }
 }
