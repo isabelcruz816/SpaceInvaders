@@ -55,6 +55,7 @@ public class Game implements Runnable {
      */
     private Bullet playerBullet;
     private Bullet enemyBullet;
+    private Player player;
     
     /**
      * The game timers
@@ -140,6 +141,7 @@ public class Game implements Runnable {
     private void initItems() {
         playerBullet = new Bullet(400, 400, 5, 5, -5);
         enemyBullet = new Bullet(200, 100, 3, 16, 5);
+        player = new Player((getWidth() / 2) - 50, 400, 75, 75, this);
     }
 
     /**
@@ -175,6 +177,7 @@ public class Game implements Runnable {
     private void update() {
         playerBullet.update();
         enemyBullet.update();
+        player.update();
         
        // update input
         getKeyManager().update();
@@ -197,6 +200,7 @@ public class Game implements Runnable {
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, getWidth(), getHeight());
             
+            player.render(g);
             playerBullet.render(g);
             enemyBullet.render(g);
             

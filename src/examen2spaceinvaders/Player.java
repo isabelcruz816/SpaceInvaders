@@ -15,8 +15,9 @@ import java.awt.event.KeyEvent;
 public class Player extends Item {
     private Game game;
 
-    public Player(int x, int y, int width, int height) {
+    public Player(int x, int y, int width, int height, Game game) {
         super(x, y, width, height);
+        this.game = game;
     }
 
     public Game getGame() {
@@ -25,10 +26,10 @@ public class Player extends Item {
     
     @Override
     public void update() {
-        if(getGame().getKeyManager().isKeyPressed(KeyEvent.VK_RIGHT)) {
+        if(getGame().getKeyManager().isKeyDown(KeyEvent.VK_RIGHT)) {
             setX(getX() + 6);
         }
-        else if(getGame().getKeyManager().isKeyPressed(KeyEvent.VK_LEFT)) {
+        else if(getGame().getKeyManager().isKeyDown(KeyEvent.VK_LEFT)) {
             setX(getX() - 6);
         }
         
