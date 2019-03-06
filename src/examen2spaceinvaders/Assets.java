@@ -14,6 +14,8 @@ public class Assets {
     /**
      * Images that will be used by the game.
      */
+    public static BufferedImage playerBullet;
+    public static BufferedImage enemyBullet;
     
     /**
      * Audio that will be used by the game.
@@ -23,6 +25,7 @@ public class Assets {
      * Loads all the assets that the game needs.
      */
     public static void init() {
-
+        playerBullet = ImageLoader.loadImage("/images/playerBullet.png");
+        enemyBullet = ImageLoader.loadImage("/images/enemyBullet.png");
     }
 }

@@ -53,7 +53,9 @@ public class Game implements Runnable {
     /**
      * The game items.
      */
-
+    private Bullet playerBullet;
+    private Bullet enemyBullet;
+    
     /**
      * The game timers
      */
@@ -136,7 +138,8 @@ public class Game implements Runnable {
      * Creates the items that will be used in the game.
      */
     private void initItems() {
-
+        playerBullet = new Bullet(400, 400, 5, 5, -5);
+        enemyBullet = new Bullet(200, 100, 3, 16, 5);
     }
 
     /**
@@ -170,6 +173,9 @@ public class Game implements Runnable {
      * Updates the game every frame.
      */
     private void update() {
+        playerBullet.update();
+        enemyBullet.update();
+        
        // update input
         getKeyManager().update();
         getMouseManager().update();
@@ -188,6 +194,11 @@ public class Game implements Runnable {
             // clear screen
             Graphics g = bs.getDrawGraphics();
             g.clearRect(0, 0, getWidth(), getHeight());
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, getWidth(), getHeight());
+            
+            playerBullet.render(g);
+            enemyBullet.render(g);
             
             // actually render the whole scene
             bs.show();
