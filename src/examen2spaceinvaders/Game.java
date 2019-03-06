@@ -21,7 +21,11 @@ import java.util.ArrayList;
  * @version 1.0
  */
 public class Game implements Runnable {
-
+    /**
+     * Constants
+     */
+    public static final int MAX_STARS = 200;
+    
     /**
      * The display's properties.
      */
@@ -57,6 +61,7 @@ public class Game implements Runnable {
     private Bullet enemyBullet;
     private Player player;
     private Enemy enemy;
+    private ArrayList<Star> stars;
     
     /**
      * The game timers
@@ -144,6 +149,13 @@ public class Game implements Runnable {
         enemyBullet = new Bullet(200, 100, 3, 16, 5);
         player = new Player((getWidth() / 2) - 24, 540, 48, 48, this);
         enemy = new Enemy(Util.randNum(0, getWidth()), 200, 75, 75, this);
+        stars = new ArrayList();
+        
+        // create stars
+        for(int i = 0; i < MAX_STARS; i++) {
+            int size = Util.randNum(1, 2);
+            stars.add(new Star(Util.randNum(0, getWidth()), Util.randNum(0, getHeight()), size, size, size));
+        }
     }
 
     /**
@@ -171,8 +183,6 @@ public class Game implements Runnable {
         }
     }
 
-    int a = 0;
-
     /**
      * Updates the game every frame.
      */
@@ -181,6 +191,15 @@ public class Game implements Runnable {
         enemyBullet.update();
         player.update();
         enemy.update();
+        
+        for(int i = 0; i < stars.size(); i++) {
+            Star star = stars.get(i);
+            if(star.getY() >= getHeight()) {
+                star.setY(0);
+                star.setX(Util.randNum(0, getWidth()));
+            }
+            star.update();
+        }
         
        // update input
         getKeyManager().update();
@@ -202,6 +221,10 @@ public class Game implements Runnable {
             g.clearRect(0, 0, getWidth(), getHeight());
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, getWidth(), getHeight());
+            
+            for(int i = 0; i < stars.size(); i++) {
+                stars.get(i).render(g);
+            }
             
             player.render(g);
             playerBullet.render(g);

@@ -13,7 +13,7 @@ import java.awt.image.BufferedImage;
  * @author Cesar Barraza
  */
 public class Bullet extends Item {
-    int speed = -5;
+    private int speed;
     
     public Bullet(int x, int y, int width, int height, int speed) {
         super(x, y, width, height);
