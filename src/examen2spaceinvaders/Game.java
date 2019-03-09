@@ -148,7 +148,7 @@ public class Game implements Runnable {
         playerBullet = new Bullet(400, 400, 5, 5, -5);
         enemyBullet = new Bullet(200, 100, 3, 16, 5);
         player = new Player((getWidth() / 2) - 24, 540, 48, 48, this);
-        enemy = new Enemy(Util.randNum(0, getWidth()), 200, 75, 75, this);
+        enemy = new Enemy(Util.randNum(0, getWidth()), 70, 75, 75, this);
         stars = new ArrayList();
         
         // create stars

@@ -18,6 +18,7 @@ public class Enemy extends Item{
      */
     private Bullet bullet;
     private Game game;
+    private int velX;
    
     /**
      * 
@@ -29,23 +30,34 @@ public class Enemy extends Item{
     public Enemy(int x, int y, int width, int height, Game game) {
         super(x, y, width, height);
         this.game = game;
+        velX = 4;
     }
 
     public Game getGame() {
         return game;
     }
 
+    public int getVelX() {
+        return velX;
+    }
+
+    public void setVelX(int velX) {
+        this.velX = velX;
+    }
+
     @Override
     public void update() {
-        setX(getX() + 6);
-        
         // collission with borders
         if(getX() + getWidth() > getGame().getWidth()) {
             setX(getGame().getWidth() - getWidth());
+            setVelX(getVelX() * -1);
         }
         if(getX() <= 0) {
             setX(0);
+            setVelX(getVelX() * -1);
         }
+        // update position
+        setX(getX() + getVelX());
     }
 
     @Override

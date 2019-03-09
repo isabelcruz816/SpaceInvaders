@@ -29,7 +29,7 @@ public class Assets {
     public static void init() {
         playerBullet = ImageLoader.loadImage("/images/playerBullet.png");
         enemyBullet = ImageLoader.loadImage("/images/enemyBullet.png");
-        player = ImageLoader.loadImage("/images/spaceship.png");
+        player = ImageLoader.loadImage("/images/player1.png");
         enemy = ImageLoader.loadImage("/images/alien.png");
     }
 }
