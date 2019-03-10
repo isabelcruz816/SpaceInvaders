@@ -19,7 +19,8 @@ public class Enemy extends Item{
     private Bullet bullet;
     private Game game;
     private int velX;
-   
+    private boolean dead;
+    
     /**
      * 
      * @param x
@@ -30,7 +31,7 @@ public class Enemy extends Item{
     public Enemy(int x, int y, int width, int height, Game game) {
         super(x, y, width, height);
         this.game = game;
-        velX = 4;
+        velX = 2;
     }
 
     public Game getGame() {
@@ -45,6 +46,14 @@ public class Enemy extends Item{
         this.velX = velX;
     }
 
+    public boolean isDead() {
+        return dead;
+    }
+    
+    public void setDead(boolean dead) {
+        this.dead = dead;
+    }
+    
     @Override
     public void update() {
         // update position

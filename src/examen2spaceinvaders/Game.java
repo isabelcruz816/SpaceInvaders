@@ -21,13 +21,14 @@ import java.util.ArrayList;
  * @version 1.0
  */
 public class Game implements Runnable {
+
     /**
      * Constants
      */
     public static final int MAX_STARS = 200;
-    public static final int MAX_ENEMIES_ROW = 5;
-    public static final int MAX_ENEMIES_COLUMN = 7;
-    
+    public static final int MAX_ENEMY_ROWS = 5;
+    public static final int MAX_ENEMY_COLUMNS = 7;
+
     /**
      * The display's properties.
      */
@@ -65,16 +66,14 @@ public class Game implements Runnable {
     private Player player;
     private Enemy enemy;
     private ArrayList<Star> stars;
-    private Enemy enemies[][];
-    
+    private Enemy[][] enemies;
+
     /**
      * The game timers
      */
-    
     /**
      * Game lives
      */
-
     /**
      * Initializes the game object with the desired display properties.
      *
@@ -154,23 +153,25 @@ public class Game implements Runnable {
         player = new Player((getWidth() / 2) - 24, 540, 48, 48, this);
         enemy = new Enemy(200, 80, 75, 75, this);
         stars = new ArrayList();
-        enemies = new Enemy[MAX_ENEMIES_ROW][MAX_ENEMIES_COLUMN];
-        
+        enemies = new Enemy[MAX_ENEMY_ROWS][MAX_ENEMY_COLUMNS];
+
         // create stars
-        for(int i = 0; i < MAX_STARS; i++) {
+        for (int i = 0; i < MAX_STARS; i++) {
             int size = Util.randNum(1, 2);
             stars.add(new Star(Util.randNum(0, getWidth()), Util.randNum(0, getHeight()), size, size, size));
         }
+
         //create aliens
-        for (int i = 0; i < MAX_ENEMIES_ROW; i++) {
-            for (int j = 0; j < MAX_ENEMIES_COLUMN; j++) {
+        for (int r = 0; r < MAX_ENEMY_ROWS; r++) {
+            for (int c = 0; c < MAX_ENEMY_COLUMNS; c++) {
                 int w = 50;
                 int h = 45;
-                int posX = w * j + 20;
-                int posY =  h * i + 20;
-                enemies[i][j] = new Enemy(posX, posY, w, h, this);
+                int posX = w * c + 20;
+                int posY = h * r + 20;
+                enemies[r][c] = new Enemy(posX, posY, w, h, this);
             }
         }
+        direction = 2;
     }
 
     /**
@@ -202,47 +203,63 @@ public class Game implements Runnable {
      * Updates the game every frame.
      */
     private void update() {
-        //playerBullet.update();
-        //enemyBullet.update();
         player.update();
-        //enemy.update();
-        
-        for(int i = 0; i < stars.size(); i++) {
+
+        for (int i = 0; i < stars.size(); i++) {
             Star star = stars.get(i);
-            if(star.getY() >= getHeight()) {
+            if (star.getY() >= getHeight()) {
                 star.setY(0);
                 star.setX(Util.randNum(0, getWidth()));
             }
             star.update();
         }
-        
-        for(int i = 0; i < MAX_ENEMIES_ROW; i++) {
-            for(int j = 0; j < MAX_ENEMIES_COLUMN; j++) {
-                Enemy enemy = enemies[i][j];
-                enemy.update();
-                // collission with borders
-                if(enemy.getX() + enemy.getWidth() > getWidth()) {
-                    for(int k = 0; k < MAX_ENEMIES_ROW; k++) {
-                        for(int l = 0; l < MAX_ENEMIES_COLUMN; l++) {
-                            Enemy newEnemy = enemies[k][l];
-                            newEnemy.setX(newEnemy.getX() - 5);
-                            newEnemy.setVelX(newEnemy.getVelX() * -1);
-                        }
-                    }
+
+        int startingDirection = direction;
+        for (int r = 0; r < MAX_ENEMY_ROWS; r++) {
+            for (int c = 0; c < MAX_ENEMY_COLUMNS; c++) {
+                // if we already changed direction in this frame, exit
+                if (startingDirection != direction) {
+                    break;
                 }
-                else if(enemy.getX() <= 0) {
-                    for(int k = 0; k < MAX_ENEMIES_ROW; k++) {
-                        for(int l = 0; l < MAX_ENEMIES_COLUMN; l++) {
-                            Enemy newEnemy = enemies[k][l];
-                            newEnemy.setX(newEnemy.getX() + 5);
-                            newEnemy.setVelX(newEnemy.getVelX() * -1);
+                
+                Enemy enemy = enemies[r][c];
+                if (enemy.isDead()) {
+                    continue;
+                }
+
+                enemy.setVelX(direction);
+                enemy.update();
+
+                // collission with borders
+                if (enemy.getX() + enemy.getWidth() >= getWidth()) {
+                    direction = -2;
+                } else if (enemy.getX() <= 0) {
+                    direction = 2;
+                }
+
+                // if we changed direction, set it to all enemies
+                if (startingDirection != direction) {
+                    if (direction < 0) {
+                        for (int x = 0; x < MAX_ENEMY_COLUMNS; x++) {
+                            Enemy e = enemies[r][x];
+                            e.setX(e.getX() - Math.abs(direction));
+                        }
+                    } else {
+                        enemy.setX(enemy.getX() + 2);
+                    }
+
+                    // move enemies down
+                    for (int r2 = 0; r2 < MAX_ENEMY_ROWS; r2++) {
+                        for (int c2 = 0; c2 < MAX_ENEMY_COLUMNS; c2++) {
+                            Enemy newEnemy = enemies[r2][c2];
+                            newEnemy.setY(newEnemy.getY() + 10);
                         }
                     }
                 }
             }
         }
-        
-       // update input
+
+        // update input
         getKeyManager().update();
         getMouseManager().update();
     }
@@ -262,20 +279,23 @@ public class Game implements Runnable {
             g.clearRect(0, 0, getWidth(), getHeight());
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, getWidth(), getHeight());
-            
-            for(int i = 0; i < stars.size(); i++) {
+
+            for (int i = 0; i < stars.size(); i++) {
                 stars.get(i).render(g);
             }
-            
+
             player.render(g);
-            //playerBullet.render(g);
-            //enemyBullet.render(g);
-            
-            for(int i = 0; i < MAX_ENEMIES_ROW; i++) {
-                for (int j = 0; j < MAX_ENEMIES_COLUMN; j++) {
-                    enemies[i][j].render(g);
+
+            // render enemies
+            for (int r = 0; r < MAX_ENEMY_ROWS; r++) {
+                for (int c = 0; c < MAX_ENEMY_COLUMNS; c++) {
+                    Enemy enemy = enemies[r][c];
+                    if (enemy.isDead()) {
+                        continue;
+                    }
+                    enemy.render(g);
                 }
-            }            
+            }
             // actually render the whole scene
             bs.show();
             g.dispose();
