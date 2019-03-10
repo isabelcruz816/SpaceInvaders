@@ -149,8 +149,8 @@ public class Game implements Runnable {
      * Creates the items that will be used in the game.
      */
     private void initItems() {
-        playerBullet = new Bullet(400, 400, 5, 5, -5);
-        enemyBullet = new Bullet(200, 100, 3, 16, 5);
+        //playerBullet = new Bullet(400, 400, 5, 5, -5);
+        //enemyBullet = new Bullet(200, 100, 3, 16, 5);
         player = new Player((getWidth() / 2) - 24, 540, 48, 48, this);
         enemy = new Enemy(200, 80, 75, 75, this);
         stars = new ArrayList();
@@ -202,8 +202,8 @@ public class Game implements Runnable {
      * Updates the game every frame.
      */
     private void update() {
-        playerBullet.update();
-        enemyBullet.update();
+        //playerBullet.update();
+        //enemyBullet.update();
         player.update();
         //enemy.update();
         
@@ -268,8 +268,8 @@ public class Game implements Runnable {
             }
             
             player.render(g);
-            playerBullet.render(g);
-            enemyBullet.render(g);
+            //playerBullet.render(g);
+            //enemyBullet.render(g);
             
             for(int i = 0; i < MAX_ENEMIES_ROW; i++) {
                 for (int j = 0; j < MAX_ENEMIES_COLUMN; j++) {
