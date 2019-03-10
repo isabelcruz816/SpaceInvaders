@@ -14,7 +14,7 @@ import java.awt.event.KeyEvent;
  */
 public class Player extends Item {
     private Game game;
-    private Bullet playerBullet;
+    private Bullet bullet;
 
     public Player(int x, int y, int width, int height, Game game) {
         super(x, y, width, height);
@@ -25,11 +25,16 @@ public class Player extends Item {
         return game;
     }
     
+    public Bullet getBullet() {
+        return bullet;
+    }
+    
+    public void setBullet(Bullet bullet) {
+        this.bullet = bullet;
+    }
+    
     @Override
     public void update() {
-        if(playerBullet != null) {
-         playerBullet.update();   
-        }
         if(getGame().getKeyManager().isKeyDown(KeyEvent.VK_RIGHT)) {
             setX(getX() + 6);
         }
@@ -37,10 +42,19 @@ public class Player extends Item {
             setX(getX() - 6);
         }
         
-        //shoots
+        // shoot bullet
         if(getGame().getKeyManager().isKeyDown(KeyEvent.VK_SPACE)) {
-            if(playerBullet == null) {
-                playerBullet = new Bullet(400, 400, 5, 5, -5);
+            if(getBullet() == null) {
+                setBullet(new Bullet(getX() + (getWidth() / 2 - 2), getY() - 1, 4, 4, -5));
+            }
+        }
+        
+        // update bullet
+        if(getBullet() != null) {
+            getBullet().update();   
+            // check if bullet goes out of the screen
+            if(getBullet().getY() <= 0) {
+                setBullet(null);
             }
         }
         
@@ -56,8 +70,8 @@ public class Player extends Item {
     @Override
     public void render(Graphics g) {
         g.drawImage(Assets.player, x, y, width, height, null);
-        if(playerBullet != null) {
-            playerBullet.render(g);
+        if(bullet != null) {
+            bullet.render(g);
         }
     }
     

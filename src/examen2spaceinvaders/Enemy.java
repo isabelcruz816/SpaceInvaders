@@ -12,7 +12,7 @@ import java.awt.Graphics;
  * @author anaisabelcruz
  * @author cesarbarraza
  */
-public class Enemy extends Item{
+public class Enemy extends Item {
     /**
      * Items of enemy.
      */
@@ -34,6 +34,14 @@ public class Enemy extends Item{
         velX = 2;
     }
 
+    public Bullet getBullet() {
+        return bullet;
+    }
+    
+    public void setBullet(Bullet bullet) {
+        this.bullet = bullet;
+    }
+    
     public Game getGame() {
         return game;
     }
@@ -54,15 +62,34 @@ public class Enemy extends Item{
         this.dead = dead;
     }
     
+    public void shoot() {
+        if(getBullet() == null) {
+            setBullet(new Bullet(getX() + (getWidth() / 2 - 2), getY() + getHeight(), 2, 8, 5));
+        }
+    }
+    
     @Override
     public void update() {
         // update position
         setX(getX() + getVelX());
+        
+        // update the bullet
+        if(getBullet() != null) {
+            getBullet().update();
+            
+            // if it goes outside of the screen, delete it
+            if(getBullet().getY() + getBullet().getHeight() >= getGame().getHeight()) {
+                setBullet(null);
+            }
+        }
     }
 
     @Override
     public void render(Graphics g) {
        g.drawImage(Assets.enemy, x, y, width, height, null);
+       if(getBullet() != null) {
+           getBullet().render(g);
+       }
     }
     
 }

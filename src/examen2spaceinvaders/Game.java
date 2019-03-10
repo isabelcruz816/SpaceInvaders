@@ -21,9 +21,8 @@ import java.util.ArrayList;
  * @version 1.0
  */
 public class Game implements Runnable {
-
     /**
-     * Constants
+     * Game Constants
      */
     public static final int MAX_STARS = 200;
     public static final int MAX_ENEMY_ROWS = 5;
@@ -35,7 +34,6 @@ public class Game implements Runnable {
     private String title;
     private int width;
     private int height;
-    private int direction;
 
     /**
      * The display that represents the game's window.
@@ -67,13 +65,16 @@ public class Game implements Runnable {
     private Enemy enemy;
     private ArrayList<Star> stars;
     private Enemy[][] enemies;
+    private int direction;
 
     /**
      * The game timers
      */
+    
     /**
      * Game lives
      */
+    
     /**
      * Initializes the game object with the desired display properties.
      *
@@ -148,9 +149,7 @@ public class Game implements Runnable {
      * Creates the items that will be used in the game.
      */
     private void initItems() {
-        //playerBullet = new Bullet(400, 400, 5, 5, -5);
-        //enemyBullet = new Bullet(200, 100, 3, 16, 5);
-        player = new Player((getWidth() / 2) - 24, 540, 48, 48, this);
+        player = new Player((getWidth() / 2) - 24, 540, 36, 36, this);
         enemy = new Enemy(200, 80, 75, 75, this);
         stars = new ArrayList();
         enemies = new Enemy[MAX_ENEMY_ROWS][MAX_ENEMY_COLUMNS];
@@ -205,8 +204,11 @@ public class Game implements Runnable {
     private void update() {
         player.update();
 
+        // update stars
         for (int i = 0; i < stars.size(); i++) {
             Star star = stars.get(i);
+            
+            // if stars reaches end of screen, reset position
             if (star.getY() >= getHeight()) {
                 star.setY(0);
                 star.setX(Util.randNum(0, getWidth()));
@@ -214,6 +216,7 @@ public class Game implements Runnable {
             star.update();
         }
 
+        // update enemies
         int startingDirection = direction;
         for (int r = 0; r < MAX_ENEMY_ROWS; r++) {
             for (int c = 0; c < MAX_ENEMY_COLUMNS; c++) {
@@ -227,9 +230,16 @@ public class Game implements Runnable {
                     continue;
                 }
 
+                // update this enemy
                 enemy.setVelX(direction);
                 enemy.update();
 
+                // shoot randomly
+                int rng = Util.randNum(0, 1000);
+                if(rng == 10) {
+                    enemy.shoot();
+                }
+                
                 // collission with borders
                 if (enemy.getX() + enemy.getWidth() >= getWidth()) {
                     direction = -2;
@@ -240,8 +250,8 @@ public class Game implements Runnable {
                 // if we changed direction, set it to all enemies
                 if (startingDirection != direction) {
                     if (direction < 0) {
-                        for (int x = 0; x < MAX_ENEMY_COLUMNS; x++) {
-                            Enemy e = enemies[r][x];
+                        for (int c2 = 0; c2 < MAX_ENEMY_COLUMNS; c2++) {
+                            Enemy e = enemies[r][c2];
                             e.setX(e.getX() - Math.abs(direction));
                         }
                     } else {
