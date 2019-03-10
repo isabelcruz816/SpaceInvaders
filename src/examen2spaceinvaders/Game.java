@@ -9,6 +9,7 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -346,6 +347,16 @@ public class Game implements Runnable {
             initItems();
         }
         
+        // check if player wants to save
+        if(getKeyManager().isKeyPressed(KeyEvent.VK_G)) {
+            saveGame();
+        }
+        
+        // check if player wants to load
+        if(getKeyManager().isKeyPressed(KeyEvent.VK_C)) {
+            loadGame();
+        }
+        
         // update input
         getKeyManager().update();
         getMouseManager().update();
@@ -413,6 +424,79 @@ public class Game implements Runnable {
         }
     }
 
+    /**
+     * Creates a text file which stores the game's current state.
+     */
+    private void saveGame() {
+        try {
+            // create the file
+            FileWriter fw = new FileWriter("save.txt");
+
+            // save player info
+            fw.write(String.valueOf(player.getX()) + '\n');
+            fw.write(String.valueOf(player.getY()) + '\n');
+            fw.write(String.valueOf(getLives()) + '\n');
+            
+            // save enemies state info
+            fw.write(String.valueOf(direction) + '\n');
+            fw.write(String.valueOf(changes) + '\n');
+            
+            // save enemies info
+            for(int r = 0; r < MAX_ENEMY_ROWS; r++) {
+                for(int c = 0; c < MAX_ENEMY_COLUMNS; c++) {
+                    Enemy enemy = enemies[r][c];
+                    fw.write(String.valueOf(enemy.getX()) + '\n');
+                    fw.write(String.valueOf(enemy.getY()) + '\n');
+                    int dead = enemy.isDead() ? 1 : 0;
+                    fw.write(String.valueOf(dead) + '\n');
+                }
+            }
+            
+            fw.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Attempts to load a save file that contains the state of another game, and sets it to the current game.
+     */
+    private void loadGame() {
+        try {
+            // check if file exists 
+            if(!new File("save.txt.").exists()) {
+                return;
+            }
+            
+            // read the file
+            BufferedReader br = new BufferedReader(new FileReader("save.txt"));
+
+            // load player info
+            player.setX(Integer.parseInt(br.readLine()));
+            player.setY(Integer.parseInt(br.readLine()));
+            setLives(Integer.parseInt(br.readLine()));
+            
+            // load alien state info
+            direction = Integer.parseInt(br.readLine());
+            changes = Integer.parseInt(br.readLine());
+            
+            // load alien info
+            for(int r = 0; r < MAX_ENEMY_ROWS; r++) {
+                for(int c = 0; c < MAX_ENEMY_COLUMNS; c++) {
+                    Enemy enemy = enemies[r][c];
+                    enemy.setX(Integer.parseInt(br.readLine()));
+                    enemy.setY(Integer.parseInt(br.readLine()));
+                    int dead = Integer.parseInt(br.readLine());
+                    enemy.setDead(dead == 1);
+                }
+            }
+            
+            br.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
     /**
      * The main game loop.
      */
