@@ -1,3 +1,8 @@
+package examen2spaceinvaders;
+
+import java.awt.Color;
+import java.awt.Graphics;
+
 /**
  * Star
  * 
@@ -6,16 +11,6 @@
  * @author Isabel Cruz A01138741
  * Date 09/March/2019
  * @version 1.0
- */
-package examen2spaceinvaders;
-
-import java.awt.Color;
-import java.awt.Graphics;
-
-/**
- *
- * @author Cesar Barraza
- * @author Isabel Cruz
  */
 public class Star extends Item {
     /**

@@ -1,3 +1,8 @@
+package examen2spaceinvaders;
+
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+
 /**
  * Enemy
  * 
@@ -6,15 +11,6 @@
  * @author Isabel Cruz A01138741
  * Date 09/March/2019
  * @version 1.0
- */
-package examen2spaceinvaders;
-
-import java.awt.Graphics;
-
-/**
- *
- * @author anaisabelcruz
- * @author cesarbarraza
  */
 public class Enemy extends Item {
     /**
@@ -33,10 +29,10 @@ public class Enemy extends Item {
      * @param width enemy width
      * @param height enemy height
      */
-    public Enemy(int x, int y, int width, int height, Game game) {
+    public Enemy(int x, int y, int width, int height, Game game, BufferedImage img) {
         super(x, y, width, height);
         this.game = game;
-        this.animation = new Animation(Assets.alien, 109, 79, 0.5, 2);
+        this.animation = new Animation(img, 109, 79, 0.5, 2);
         velX = 2;
     }
     /**

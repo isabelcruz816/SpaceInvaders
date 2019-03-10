@@ -1,13 +1,11 @@
 package examen2spaceinvaders;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -29,7 +27,7 @@ public class Game implements Runnable {
      */
     public static final int MAX_STARS = 200;
     public static final int MAX_ENEMY_ROWS = 5;
-    public static final int MAX_ENEMY_COLUMNS = 12;
+    public static final int MAX_ENEMY_COLUMNS = 10;
 
     /**
      * The display's properties.
@@ -265,7 +263,15 @@ public class Game implements Runnable {
                 int h = 35;
                 int posX = w * c + 20;
                 int posY = h * r + 15;
-                enemies[r][c] = new Enemy(posX + tempX, posY + tempY, w, h, this);
+                BufferedImage img = null;
+                if(r == 0) {
+                    img = Assets.alien3;
+                } else if(r == MAX_ENEMY_ROWS - 1) {
+                    img = Assets.alien2;
+                } else {
+                    img = Assets.alien1;
+                }
+                enemies[r][c] = new Enemy(posX + tempX, posY + tempY, w, h, this, img);
                 tempX += 4;
             }
             tempY += 4;
@@ -361,7 +367,16 @@ public class Game implements Runnable {
                             enemy.setDead(true);
                             player.setBullet(null);
                             Assets.invaderExplosion.play();
-                            setScore(getScore() + ((MAX_ENEMY_ROWS - r) * 10));
+                            
+                            int points = 0;
+                            if(r == 0) {
+                                points = 30;
+                            } else if(r == MAX_ENEMY_ROWS - 1) {
+                                points = 10;
+                            } else {
+                                points = 5;
+                            }
+                            setScore(getScore() + points);
                             continue;
                         }
                     }
@@ -381,6 +396,14 @@ public class Game implements Runnable {
                         }
                     }
                     
+                    //check for bullets collision
+                    if(enemy.getBullet() != null && player.getBullet() != null) {
+                        if(enemy.getBullet().intersects(player.getBullet())) {
+                            enemy.setBullet(null);
+                            player.setBullet(null);
+                        }
+                    }
+                    
                     // shoot randomly
                     int rng = Util.randNum(0, 1000);
                     if (rng == 10) {
@@ -397,7 +420,6 @@ public class Game implements Runnable {
                     // if we changed direction, set it to all enemies
                     if (startingDirection != direction) {
                         changes++;
-                        System.out.println(changes);
                         if (direction < 0) {
                             for (int c2 = 0; c2 < MAX_ENEMY_COLUMNS; c2++) {
                                 Enemy e = enemies[r][c2];
@@ -485,6 +507,8 @@ public class Game implements Runnable {
             }
             
             // render lives and score
+            g.setColor(new Color(0, 0, 0, 100));
+            g.fillRect(0, 0, 210, 100);
             g.setColor(Color.WHITE);
             g.setFont(new Font("Century Gothic", Font.PLAIN, 22));
             g.drawString("Lives: " + getLives(), 15, 30);
@@ -493,11 +517,19 @@ public class Game implements Runnable {
             
             // render paused screen
             if (isPaused()) {
-                g.setColor(new Color(0, 0, 0, 100));
+                g.setColor(new Color(0, 0, 0, 150));
                 g.fillRect(0, 0, getWidth(), getHeight());
                 g.setColor(Color.WHITE);
                 g.setFont(new Font("Century Gothic", Font.BOLD, 40));
                 g.drawString("PAUSED", 328, 300);
+                // Menu
+                g.setColor(Color.MAGENTA);
+                g.setFont(new Font("Century Gothic", Font.PLAIN, 22));
+                g.drawString("Menu: ", 630, 30);
+                g.drawString("L - Load game", 630, 52);
+                g.drawString("P - Pause game", 630, 74);
+                g.drawString("S - Save game", 630, 96);
+                g.drawString("R - Restart", 630, 118);
             }
             
             // render game over screen

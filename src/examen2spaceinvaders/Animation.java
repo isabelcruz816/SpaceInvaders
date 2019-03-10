@@ -1,3 +1,7 @@
+package examen2spaceinvaders;
+
+import java.awt.image.BufferedImage;
+
 /**
  * Animation
  * 
@@ -6,14 +10,6 @@
  * @author Isabel Cruz A01138741
  * Date 09/March/2019
  * @version 1.0
- */
-package examen2spaceinvaders;
-
-import java.awt.image.BufferedImage;
-
-/**
- *@author Isabel Cruz
- * @author Cesar Barraza
  */
 public class Animation {
     private BufferedImage image;

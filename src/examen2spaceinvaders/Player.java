@@ -1,3 +1,8 @@
+package examen2spaceinvaders;
+
+import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+
 /**
  * Player
  * 
@@ -6,16 +11,6 @@
  * @author Isabel Cruz A01138741
  * Date 09/March/2019
  * @version 1.0
- */
-package examen2spaceinvaders;
-
-import java.awt.Graphics;
-import java.awt.event.KeyEvent;
-
-/**
- *
- * @author anaisabelcruz
- * @author Cesar Barraza
  */
 public class Player extends Item {
     /**

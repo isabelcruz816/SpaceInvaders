@@ -18,8 +18,9 @@ public class Assets {
     public static BufferedImage playerBullet;
     public static BufferedImage enemyBullet;
     public static BufferedImage player;
-    public static BufferedImage enemy;
-    public static BufferedImage alien;
+    public static BufferedImage alien1;
+    public static BufferedImage alien2;
+    public static BufferedImage alien3;
     
     /**
      * Audio that will be used by the game.
@@ -35,8 +36,9 @@ public class Assets {
         playerBullet = ImageLoader.loadImage("/images/playerBullet.png");
         enemyBullet = ImageLoader.loadImage("/images/enemyBullet.png");
         player = ImageLoader.loadImage("/images/player1.png");
-        enemy = ImageLoader.loadImage("/images/alien.png");
-        alien = ImageLoader.loadImage("/images/alien2.png");
+        alien1 = ImageLoader.loadImage("/images/alien1.png");
+        alien2 = ImageLoader.loadImage("/images/alien2.png");
+        alien3 = ImageLoader.loadImage("/images/alien3.png");
         shoot = new SoundClip("/audio/shoot.wav");
         playerExplosion = new SoundClip("/audio/playerExplosion.wav");
         invaderExplosion = new SoundClip("/audio/invaderExplosion.wav");
