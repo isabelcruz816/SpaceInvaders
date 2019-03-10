@@ -450,7 +450,7 @@ public class Game implements Runnable {
         }
         
         // check if player pauses the game
-        if(getKeyManager().isKeyPressed(KeyEvent.VK_P)) {
+        if(getKeyManager().isKeyPressed(KeyEvent.VK_P) && !isGameOver()) {
             setPaused(!isPaused());
         }
         
