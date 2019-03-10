@@ -21,6 +21,7 @@ public class Assets {
     public static BufferedImage alien1;
     public static BufferedImage alien2;
     public static BufferedImage alien3;
+    public static BufferedImage shield;
     
     /**
      * Audio that will be used by the game.
@@ -39,6 +40,7 @@ public class Assets {
         alien1 = ImageLoader.loadImage("/images/alien1.png");
         alien2 = ImageLoader.loadImage("/images/alien2.png");
         alien3 = ImageLoader.loadImage("/images/alien3.png");
+        shield = ImageLoader.loadImage("/images/shield.png");
         shoot = new SoundClip("/audio/shoot.wav");
         playerExplosion = new SoundClip("/audio/playerExplosion.wav");
         invaderExplosion = new SoundClip("/audio/invaderExplosion.wav");
