@@ -62,6 +62,7 @@ public class Game implements Runnable {
      */
     private Player player;
     private ArrayList<Star> stars;
+    private Shield[] shields;
     private Enemy[][] enemies;
     private int direction;
     private boolean paused;
@@ -233,7 +234,14 @@ public class Game implements Runnable {
         player = new Player((getWidth() / 2) - 24, 570, 22, 22, this);
         stars = new ArrayList();
         enemies = new Enemy[MAX_ENEMY_ROWS][MAX_ENEMY_COLUMNS];
+        shields = new Shield[4];
 
+        // create shields
+        shields[0] = new Shield(60, 500, 78, 45);
+        shields[1] = new Shield(250, 500, 78, 45);
+        shields[2] = new Shield(450, 500, 78, 45);
+        shields[3] = new Shield(660, 500, 78, 45);
+                
         // create stars
         for (int i = 0; i < MAX_STARS; i++) {
             int size = Util.randNum(1, 2);
@@ -396,13 +404,31 @@ public class Game implements Runnable {
                         }
                     }
                     
-                    //check for bullets collision
+                    // check for bullets collision
                     if(enemy.getBullet() != null && player.getBullet() != null) {
                         if(enemy.getBullet().intersects(player.getBullet())) {
                             enemy.setBullet(null);
                             player.setBullet(null);
                         }
                     }
+                    
+                    // check collision enemybullet with shield
+                    for (int i = 0; i < 4; i++) {
+                        if (enemy.getBullet() != null) {
+                            if(shields[i].isDead()) {
+                                continue;
+                            }
+                            if (enemy.getBullet().intersects(shields[i])) {
+                                shields[i].setLives(shields[i].getLives() - 1);
+                                enemy.setBullet(null);
+
+                                if (shields[i].getLives() == 0) {
+                                    shields[i].setDead(true);
+                                }
+                            }
+                        }
+                    }
+                 
                     
                     // shoot randomly
                     int rng = Util.randNum(0, 1000);
@@ -436,6 +462,21 @@ public class Game implements Runnable {
                                 newEnemy.setY(newEnemy.getY() + 10);
                             }
                         }
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < 4; i++) {
+            if (player.getBullet() != null) {
+                if(shields[i].isDead()) {
+                    continue;
+                }
+                if (player.getBullet().intersects(shields[i])) {
+                    shields[i].setLives(shields[i].getLives() - 1);
+                    player.setBullet(null);
+
+                    if (shields[i].getLives() == 0) {
+                        shields[i].setDead(true);
                     }
                 }
             }
@@ -495,6 +536,14 @@ public class Game implements Runnable {
             }
 
             player.render(g);
+            
+            // render shields
+            for(int i = 0; i < 4; i++) {
+                if(shields[i].isDead()) {
+                    continue;
+                }
+                shields[i].render(g);
+            }
 
             // render enemies
             for (int r = 0; r < MAX_ENEMY_ROWS; r++) {
