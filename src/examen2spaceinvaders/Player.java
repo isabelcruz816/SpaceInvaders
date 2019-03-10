@@ -14,6 +14,7 @@ import java.awt.event.KeyEvent;
  */
 public class Player extends Item {
     private Game game;
+    private Bullet playerBullet;
 
     public Player(int x, int y, int width, int height, Game game) {
         super(x, y, width, height);
@@ -26,11 +27,21 @@ public class Player extends Item {
     
     @Override
     public void update() {
+        if(playerBullet != null) {
+         playerBullet.update();   
+        }
         if(getGame().getKeyManager().isKeyDown(KeyEvent.VK_RIGHT)) {
             setX(getX() + 6);
         }
         else if(getGame().getKeyManager().isKeyDown(KeyEvent.VK_LEFT)) {
             setX(getX() - 6);
+        }
+        
+        //shoots
+        if(getGame().getKeyManager().isKeyDown(KeyEvent.VK_SPACE)) {
+            if(playerBullet == null) {
+                playerBullet = new Bullet(400, 400, 5, 5, -5);
+            }
         }
         
         // collision with border
@@ -45,6 +56,9 @@ public class Player extends Item {
     @Override
     public void render(Graphics g) {
         g.drawImage(Assets.player, x, y, width, height, null);
+        if(playerBullet != null) {
+            playerBullet.render(g);
+        }
     }
     
 }
