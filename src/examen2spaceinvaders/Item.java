@@ -96,10 +96,7 @@ public abstract class Item {
     }
     
     public boolean intersects(Object obj) {
-        if(this instanceof Enemy && obj instanceof Player) {
-            return getRect().intersects(((Item)obj).getRect());
-        }
-        return false;
+        return getRect().intersects(((Item)obj).getRect());
     }
     
     public abstract void update();

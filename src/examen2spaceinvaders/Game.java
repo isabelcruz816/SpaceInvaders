@@ -28,7 +28,7 @@ public class Game implements Runnable {
      */
     public static final int MAX_STARS = 200;
     public static final int MAX_ENEMY_ROWS = 5;
-    public static final int MAX_ENEMY_COLUMNS = 10;
+    public static final int MAX_ENEMY_COLUMNS = 12;
 
     /**
      * The display's properties.
@@ -69,6 +69,9 @@ public class Game implements Runnable {
     private boolean gameOver;
     private int changes;
     private int lives;
+    private int destroyed;
+    private int score;
+    private int highscore;
     
     /**
      * The game timers
@@ -154,6 +157,48 @@ public class Game implements Runnable {
     }
     
     /**
+     * @return the destroyed enemies
+     */
+    public int getDestroyed() {
+        return destroyed;
+    }
+    
+    /**
+     * @param destroyed destoryed enemies to set
+     */
+    public void setDestroyed(int destroyed) {
+        this.destroyed = destroyed;
+    }
+    
+    /**
+     * @return the score
+     */
+    public int getScore() {
+        return score;
+    }
+    
+    /**
+     * @param score score to set
+     */
+    public void setScore(int score) {
+        this.score = score;
+    }
+    
+    /**
+     * @return the highscore
+     */
+    public int getHighscore() {
+        return highscore;
+    }
+    
+    /**
+     * @param highscore to set
+     */
+    public void setHighscore(int highscore) {
+        this.highscore = highscore;
+    }
+    
+    /**
      * @return the keyManager
      */
     public KeyManager getKeyManager() {
@@ -200,7 +245,21 @@ public class Game implements Runnable {
             stars.add(new Star(Util.randNum(0, getWidth()), Util.randNum(0, getHeight()), size, size, size));
         }
 
-        //create aliens
+        loadHighscore();
+        initAliens();
+        direction = 1;
+        changes = 0;
+        setPaused(false);
+        setGameOver(false);
+        setLives(3);
+        setDestroyed(0);
+        setScore(0);
+    }
+
+    /**
+     * Creates the aliens of the game.
+     */
+    private void initAliens() {
         int tempY = 4;
         for (int r = 0; r < MAX_ENEMY_ROWS; r++) {
             int tempX = 4;
@@ -213,14 +272,9 @@ public class Game implements Runnable {
                 tempX += 4;
             }
             tempY += 4;
-        }
-        direction = 1;
-        changes = 0;
-        setPaused(false);
-        setGameOver(false);
-        setLives(3);
+        }   
     }
-
+    
     /**
      * Starts the main game thread.
      */
@@ -268,14 +322,17 @@ public class Game implements Runnable {
             // update enemies
             int startingDirection = direction;
             int dirConstant = 1;
-            if(changes >= 3) {
+            if(changes >= 5) {
                 dirConstant = 2;
             } 
-            if(changes >= 6) {
+            if(changes >= 9) {
                 dirConstant = 3;
             }
-            if(changes >= 10) {
+            if(changes >= 16) {
                 dirConstant = 4;
+            }
+            if(changes >= 35) {
+                dirConstant = 5;
             }
             for (int r = 0; r < MAX_ENEMY_ROWS; r++) {
                 for (int c = 0; c < MAX_ENEMY_COLUMNS; c++) {
@@ -296,7 +353,35 @@ public class Game implements Runnable {
                     // check for player collision
                     if(enemy.intersects(player)) {
                         setGameOver(true);
+                        saveHighscore();
                         return;
+                    }
+                    
+                    // check for bullet collision against enemy
+                    if(player.getBullet() != null) {
+                        if(enemy.intersects(player.getBullet())) {
+                            setDestroyed(getDestroyed() + 1);
+                            enemy.setDead(true);
+                            player.setBullet(null);
+                            Assets.invaderExplosion.play();
+                            setScore(getScore() + ((MAX_ENEMY_ROWS - r) * 10));
+                            continue;
+                        }
+                    }
+                    
+                    // check for bullet collision against player
+                    if(enemy.getBullet() != null) {
+                        if(enemy.getBullet().intersects(player)) {
+                            setLives(getLives() - 1);
+                            enemy.setBullet(null);
+                            Assets.playerExplosion.play();
+                            
+                            if(getLives() <= 0) {
+                                setGameOver(true);
+                                saveHighscore();
+                                return;
+                            }
+                        }
                     }
                     
                     // shoot randomly
@@ -335,6 +420,13 @@ public class Game implements Runnable {
                     }
                 }
             }
+        }
+        
+        // check if all enemies were killed to respawn them
+        if(getDestroyed() >= MAX_ENEMY_ROWS * MAX_ENEMY_COLUMNS) {
+            initAliens();
+            changes = 0;
+            setDestroyed(0);
         }
         
         // check if player pauses the game
@@ -395,10 +487,12 @@ public class Game implements Runnable {
                 }
             }
             
-            // render lives
+            // render lives and score
             g.setColor(Color.WHITE);
-            g.setFont(new Font("Century Gothic", Font.PLAIN, 30));
-            g.drawString("Lives: " + getLives(), 20, 40);
+            g.setFont(new Font("Century Gothic", Font.PLAIN, 22));
+            g.drawString("Lives: " + getLives(), 15, 30);
+            g.drawString("Score: " + getScore(), 15, 52);
+            g.drawString("Highscore: " + getHighscore(), 15, 74);
             
             // render paused screen
             if (isPaused()) {
@@ -415,7 +509,7 @@ public class Game implements Runnable {
                 g.fillRect(0, 0, getWidth(), getHeight());
                 g.setColor(Color.RED);
                 g.setFont(new Font("Century Gothic", Font.BOLD, 40));
-                g.drawString("You got invaded!", 242, 300);
+                g.drawString("You got invaded!", 230, 300);
             }
             
             // actually render the whole scene
@@ -436,6 +530,7 @@ public class Game implements Runnable {
             fw.write(String.valueOf(player.getX()) + '\n');
             fw.write(String.valueOf(player.getY()) + '\n');
             fw.write(String.valueOf(getLives()) + '\n');
+            fw.write(String.valueOf(getScore()) + '\n');
             
             // save enemies state info
             fw.write(String.valueOf(direction) + '\n');
@@ -475,6 +570,7 @@ public class Game implements Runnable {
             player.setX(Integer.parseInt(br.readLine()));
             player.setY(Integer.parseInt(br.readLine()));
             setLives(Integer.parseInt(br.readLine()));
+            setScore(Integer.parseInt(br.readLine()));
             
             // load alien state info
             direction = Integer.parseInt(br.readLine());
@@ -493,6 +589,43 @@ public class Game implements Runnable {
             
             br.close();
         } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    private void saveHighscore() {
+        try {
+            // load highscore and compare
+            loadHighscore();
+            
+            // create the file
+            FileWriter fw = new FileWriter("hs.txt"); 
+            if(getScore() > getHighscore()) {
+                setHighscore(getScore());
+                fw.write(String.valueOf(getScore()) + '\n');   
+            } else {
+                fw.write(String.valueOf(getHighscore()) + '\n');
+            }
+            
+            fw.close();
+        } catch(IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    private void loadHighscore() {
+        try {
+            // check if file exists 
+            if(!new File("hs.txt").exists()) {
+                setHighscore(0);
+                return;
+            }
+            
+            // read the file
+            BufferedReader br = new BufferedReader(new FileReader("hs.txt"));  
+            setHighscore(Integer.parseInt(br.readLine()));
+            br.close();
+        } catch(IOException ex) {
             ex.printStackTrace();
         }
     }
