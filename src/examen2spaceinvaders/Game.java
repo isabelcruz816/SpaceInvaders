@@ -626,6 +626,13 @@ public class Game implements Runnable {
                 }
             }
             
+            // save shields
+            for(int i = 0; i < 4; i++) {
+                fw.write(String.valueOf(shields[i].getLives()) + '\n');
+                int dead = shields[i].isDead() ? 1 : 0;
+                fw.write(String.valueOf(dead) + '\n');
+            }
+            
             fw.close();
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -664,6 +671,13 @@ public class Game implements Runnable {
                     int dead = Integer.parseInt(br.readLine());
                     enemy.setDead(dead == 1);
                 }
+            }
+            
+            // load shields info
+            for(int i = 0; i < 4; i++) {
+                shields[i].setLives(Integer.parseInt(br.readLine()));
+                int dead = Integer.parseInt(br.readLine());
+                shields[i].setDead(dead == 1);
             }
             
             br.close();
