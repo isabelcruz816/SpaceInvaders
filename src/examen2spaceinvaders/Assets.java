@@ -23,6 +23,9 @@ public class Assets {
     /**
      * Audio that will be used by the game.
      */
+    public static SoundClip shoot;
+    public static SoundClip playerExplosion;
+    public static SoundClip invaderExplosion;
     
     /**
      * Loads all the assets that the game needs.
@@ -33,5 +36,8 @@ public class Assets {
         player = ImageLoader.loadImage("/images/player1.png");
         enemy = ImageLoader.loadImage("/images/alien.png");
         alien = ImageLoader.loadImage("/images/enemy.png");
+        shoot = new SoundClip("/audio/shoot.wav");
+        playerExplosion = new SoundClip("/audio/playerExplosion.wav");
+        invaderExplosion = new SoundClip("/audio/invaderExplosion.wav");
     }
 }

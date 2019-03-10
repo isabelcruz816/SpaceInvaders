@@ -43,9 +43,10 @@ public class Player extends Item {
         }
         
         // shoot bullet
-        if(getGame().getKeyManager().isKeyDown(KeyEvent.VK_SPACE)) {
+        if(getGame().getKeyManager().isKeyPressed(KeyEvent.VK_SPACE)) {
             if(getBullet() == null) {
                 setBullet(new Bullet(getX() + (getWidth() / 2 - 2), getY() - 1, 4, 4, -5));
+                Assets.shoot.play();
             }
         }
         
