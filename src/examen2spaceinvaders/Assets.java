@@ -7,7 +7,8 @@ import java.awt.image.BufferedImage;
  * 
  * Helper class to manage all the assets that the game will use.
  * @author César Barraza A01176786
- * Date 30/Jan/2019
+ * @author Isabel Cruz A01138741
+ * Date 09/March/2019
  * @version 1.0
  */
 public class Assets {

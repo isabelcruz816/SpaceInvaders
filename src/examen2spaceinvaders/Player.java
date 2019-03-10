@@ -1,7 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Player
+ * 
+ * Class to manage Player
+ * @author César Barraza A01176786
+ * @author Isabel Cruz A01138741
+ * Date 09/March/2019
+ * @version 1.0
  */
 package examen2spaceinvaders;
 
@@ -11,36 +15,51 @@ import java.awt.event.KeyEvent;
 /**
  *
  * @author anaisabelcruz
+ * @author Cesar Barraza
  */
 public class Player extends Item {
+    /**
+     * Player items.
+     */
     private Game game;
     private Bullet bullet;
-
+    
     /**
-     * 
-     * @param x 
-     * @param y
-     * @param width
-     * @param height
-     * @param game 
+     * Class constructor
+     * @param x x coordinate
+     * @param y y coordinate
+     * @param width player's width
+     * @param height player's height
+     * @param game Game
      */
     public Player(int x, int y, int width, int height, Game game) {
         super(x, y, width, height);
         this.game = game;
     }
-
+    /**
+     * Getter of game.
+     * @return game.
+     */
     public Game getGame() {
         return game;
     }
-    
+    /**
+     * Getter of the bullet
+     * @return bullet.
+     */
     public Bullet getBullet() {
         return bullet;
     }
-    
+    /**
+     * Setter of bullet
+     * @param bullet 
+     */
     public void setBullet(Bullet bullet) {
         this.bullet = bullet;
     }
-    
+    /**
+     * Updates player.
+     */
     @Override
     public void update() {
         if(getGame().getKeyManager().isKeyDown(KeyEvent.VK_RIGHT)) {
@@ -75,7 +94,10 @@ public class Player extends Item {
             setX(0);
         }
     }
-
+    /**
+     * Paints player.
+     * @param g 
+     */
     @Override
     public void render(Graphics g) {
         g.drawImage(Assets.player, x, y, width, height, null);
