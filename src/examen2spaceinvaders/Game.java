@@ -18,7 +18,9 @@ import java.util.ArrayList;
 /**
  * Game Handles everything that the game needs to function correctly.
  *
- * @author César Barraza A01176786 Date 30/Jan/2019
+ * @author César Barraza A01176786 
+ * @author Isabel Cruz A01138741
+ * Date 09/March/2019
  * @version 1.0
  */
 public class Game implements Runnable {
@@ -73,10 +75,6 @@ public class Game implements Runnable {
     private int score;
     private int highscore;
     
-    /**
-     * The game timers
-     */
-
     /**
      * Initializes the game object with the desired display properties.
      *

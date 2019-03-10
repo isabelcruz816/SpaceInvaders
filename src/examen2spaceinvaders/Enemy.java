@@ -1,7 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Enemy
+ * 
+ * Class to manage Enemy objects
+ * @author César Barraza A01176786
+ * @author Isabel Cruz A01138741
+ * Date 09/March/2019
+ * @version 1.0
  */
 package examen2spaceinvaders;
 
@@ -23,11 +27,11 @@ public class Enemy extends Item {
     private Animation animation;
     
     /**
-     * 
-     * @param x
-     * @param y
-     * @param width
-     * @param height 
+     * Class constructor
+     * @param x x coordinate
+     * @param y y coordinate
+     * @param width enemy width
+     * @param height enemy height
      */
     public Enemy(int x, int y, int width, int height, Game game) {
         super(x, y, width, height);
@@ -35,41 +39,67 @@ public class Enemy extends Item {
         this.animation = new Animation(Assets.alien, 109, 79, 0.5, 2);
         velX = 2;
     }
-
+    /**
+     * Getter of bullet
+     * @return bullet
+     */
     public Bullet getBullet() {
         return bullet;
     }
-    
+    /**
+     * Setter of bullet
+     * @param bullet 
+     */
     public void setBullet(Bullet bullet) {
         this.bullet = bullet;
     }
-    
+    /**
+     * Getter of game
+     * @return game
+     */
     public Game getGame() {
         return game;
     }
-
+    /**
+     * Getter of velocity in x axis
+     * @return velX
+     */
     public int getVelX() {
         return velX;
     }
-
+    /**
+     * Setter of velocity in x axis
+     * @param velX 
+     */
     public void setVelX(int velX) {
         this.velX = velX;
     }
-
+    /**
+     * Boolean of player life.
+     * @return dead
+     */
     public boolean isDead() {
         return dead;
     }
-    
+    /**
+     * Setter of player's dead
+     * @param dead 
+     */
     public void setDead(boolean dead) {
         this.dead = dead;
     }
-    
+    /**
+     * Shoot method for player
+     */
     public void shoot() {
+        // if bullet does not exist, create bullet
         if(getBullet() == null) {
             setBullet(new Bullet(getX() + (getWidth() / 2 - 2), getY() + getHeight(), 2, 8, 5));
         }
     }
-    
+    /**
+     * Updates player.
+     */
     @Override
     public void update() {
         // update position
@@ -88,7 +118,10 @@ public class Enemy extends Item {
         // update animation
         animation.update();
     }
-
+    /**
+     * Paints player.
+     * @param g 
+     */
     @Override
     public void render(Graphics g) {
        g.drawImage(animation.getCurrentImageFrame(), x, y, width, height, null);
