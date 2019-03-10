@@ -16,6 +16,14 @@ public class Player extends Item {
     private Game game;
     private Bullet bullet;
 
+    /**
+     * 
+     * @param x 
+     * @param y
+     * @param width
+     * @param height
+     * @param game 
+     */
     public Player(int x, int y, int width, int height, Game game) {
         super(x, y, width, height);
         this.game = game;
