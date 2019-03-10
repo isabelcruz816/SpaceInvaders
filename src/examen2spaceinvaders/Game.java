@@ -21,12 +21,13 @@ import java.util.ArrayList;
  * @version 1.0
  */
 public class Game implements Runnable {
+
     /**
      * Game Constants
      */
     public static final int MAX_STARS = 200;
     public static final int MAX_ENEMY_ROWS = 5;
-    public static final int MAX_ENEMY_COLUMNS = 7;
+    public static final int MAX_ENEMY_COLUMNS = 10;
 
     /**
      * The display's properties.
@@ -59,22 +60,19 @@ public class Game implements Runnable {
     /**
      * The game items.
      */
-    private Bullet playerBullet;
-    private Bullet enemyBullet;
     private Player player;
-    private Enemy enemy;
     private ArrayList<Star> stars;
     private Enemy[][] enemies;
     private int direction;
-
+    private boolean paused;
+    private boolean gameOver;
+    private int changes;
+    private int lives;
+    
     /**
      * The game timers
      */
-    
-    /**
-     * Game lives
-     */
-    
+
     /**
      * Initializes the game object with the desired display properties.
      *
@@ -113,6 +111,48 @@ public class Game implements Runnable {
     }
 
     /**
+     * @return the paused state
+     */
+    public boolean isPaused() {
+        return paused;
+    }
+
+    /**
+     * @param paused new paused state to set
+     */
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+
+    /**
+     * @return game over state
+     */
+    public boolean isGameOver() {
+        return gameOver;
+    }
+    
+    /**
+     * @param gameOver the gameover state to set
+     */
+    public void setGameOver(boolean gameOver) {
+        this.gameOver = gameOver;
+    }
+    
+    /**
+     * @return the lives
+     */
+    public int getLives() {
+        return lives;
+    }
+    
+    /**
+     * @param lives lives to set
+     */
+    public void setLives(int lives) {
+        this.lives = lives;
+    }
+    
+    /**
      * @return the keyManager
      */
     public KeyManager getKeyManager() {
@@ -149,8 +189,7 @@ public class Game implements Runnable {
      * Creates the items that will be used in the game.
      */
     private void initItems() {
-        player = new Player((getWidth() / 2) - 24, 540, 36, 36, this);
-        enemy = new Enemy(200, 80, 75, 75, this);
+        player = new Player((getWidth() / 2) - 24, 570, 22, 22, this);
         stars = new ArrayList();
         enemies = new Enemy[MAX_ENEMY_ROWS][MAX_ENEMY_COLUMNS];
 
@@ -161,16 +200,24 @@ public class Game implements Runnable {
         }
 
         //create aliens
+        int tempY = 4;
         for (int r = 0; r < MAX_ENEMY_ROWS; r++) {
+            int tempX = 4;
             for (int c = 0; c < MAX_ENEMY_COLUMNS; c++) {
-                int w = 50;
-                int h = 45;
+                int w = 40;
+                int h = 35;
                 int posX = w * c + 20;
-                int posY = h * r + 20;
-                enemies[r][c] = new Enemy(posX, posY, w, h, this);
+                int posY = h * r + 15;
+                enemies[r][c] = new Enemy(posX + tempX, posY + tempY, w, h, this);
+                tempX += 4;
             }
+            tempY += 4;
         }
-        direction = 2;
+        direction = 1;
+        changes = 0;
+        setPaused(false);
+        setGameOver(false);
+        setLives(3);
     }
 
     /**
@@ -202,73 +249,103 @@ public class Game implements Runnable {
      * Updates the game every frame.
      */
     private void update() {
-        player.update();
+        if (!isPaused() && !isGameOver()) {
+            player.update();
 
-        // update stars
-        for (int i = 0; i < stars.size(); i++) {
-            Star star = stars.get(i);
-            
-            // if stars reaches end of screen, reset position
-            if (star.getY() >= getHeight()) {
-                star.setY(0);
-                star.setX(Util.randNum(0, getWidth()));
+            // update stars
+            for (int i = 0; i < stars.size(); i++) {
+                Star star = stars.get(i);
+
+                // if stars reaches end of screen, reset position
+                if (star.getY() >= getHeight()) {
+                    star.setY(0);
+                    star.setX(Util.randNum(0, getWidth()));
+                }
+                star.update();
             }
-            star.update();
-        }
 
-        // update enemies
-        int startingDirection = direction;
-        for (int r = 0; r < MAX_ENEMY_ROWS; r++) {
-            for (int c = 0; c < MAX_ENEMY_COLUMNS; c++) {
-                // if we already changed direction in this frame, exit
-                if (startingDirection != direction) {
-                    break;
-                }
-                
-                Enemy enemy = enemies[r][c];
-                if (enemy.isDead()) {
-                    continue;
-                }
-
-                // update this enemy
-                enemy.setVelX(direction);
-                enemy.update();
-
-                // shoot randomly
-                int rng = Util.randNum(0, 1000);
-                if(rng == 10) {
-                    enemy.shoot();
-                }
-                
-                // collission with borders
-                if (enemy.getX() + enemy.getWidth() >= getWidth()) {
-                    direction = -2;
-                } else if (enemy.getX() <= 0) {
-                    direction = 2;
-                }
-
-                // if we changed direction, set it to all enemies
-                if (startingDirection != direction) {
-                    if (direction < 0) {
-                        for (int c2 = 0; c2 < MAX_ENEMY_COLUMNS; c2++) {
-                            Enemy e = enemies[r][c2];
-                            e.setX(e.getX() - Math.abs(direction));
-                        }
-                    } else {
-                        enemy.setX(enemy.getX() + 2);
+            // update enemies
+            int startingDirection = direction;
+            int dirConstant = 1;
+            if(changes >= 3) {
+                dirConstant = 2;
+            } 
+            if(changes >= 6) {
+                dirConstant = 3;
+            }
+            if(changes >= 10) {
+                dirConstant = 4;
+            }
+            for (int r = 0; r < MAX_ENEMY_ROWS; r++) {
+                for (int c = 0; c < MAX_ENEMY_COLUMNS; c++) {
+                    // if we already changed direction in this frame, exit
+                    if (startingDirection != direction) {
+                        break;
                     }
 
-                    // move enemies down
-                    for (int r2 = 0; r2 < MAX_ENEMY_ROWS; r2++) {
-                        for (int c2 = 0; c2 < MAX_ENEMY_COLUMNS; c2++) {
-                            Enemy newEnemy = enemies[r2][c2];
-                            newEnemy.setY(newEnemy.getY() + 10);
+                    Enemy enemy = enemies[r][c];
+                    if (enemy.isDead()) {
+                        continue;
+                    }
+
+                    // update this enemy
+                    enemy.setVelX(direction);
+                    enemy.update();
+
+                    // check for player collision
+                    if(enemy.intersects(player)) {
+                        setGameOver(true);
+                        return;
+                    }
+                    
+                    // shoot randomly
+                    int rng = Util.randNum(0, 1000);
+                    if (rng == 10) {
+                        enemy.shoot();
+                    }
+
+                    // collission with borders
+                    if (enemy.getX() + enemy.getWidth() >= getWidth()) {
+                        direction = dirConstant * -1;
+                    } else if (enemy.getX() <= 0) {
+                        direction = dirConstant;
+                    }
+
+                    // if we changed direction, set it to all enemies
+                    if (startingDirection != direction) {
+                        changes++;
+                        System.out.println(changes);
+                        if (direction < 0) {
+                            for (int c2 = 0; c2 < MAX_ENEMY_COLUMNS; c2++) {
+                                Enemy e = enemies[r][c2];
+                                e.setX(e.getX() - Math.abs(direction));
+                            }
+                        } else {
+                            enemy.setX(enemy.getX() + direction);
+                        }
+
+                        // move enemies down
+                        for (int r2 = 0; r2 < MAX_ENEMY_ROWS; r2++) {
+                            for (int c2 = 0; c2 < MAX_ENEMY_COLUMNS; c2++) {
+                                Enemy newEnemy = enemies[r2][c2];
+                                newEnemy.setY(newEnemy.getY() + 10);
+                            }
                         }
                     }
                 }
             }
         }
-
+        
+        // check if player pauses the game
+        if(getKeyManager().isKeyPressed(KeyEvent.VK_P)) {
+            setPaused(!isPaused());
+        }
+        
+        // check if player wants to restart
+        if(getKeyManager().isKeyPressed(KeyEvent.VK_R)) {
+            initItems();
+        }
+        
         // update input
         getKeyManager().update();
         getMouseManager().update();
@@ -306,6 +383,30 @@ public class Game implements Runnable {
                     enemy.render(g);
                 }
             }
+            
+            // render lives
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Century Gothic", Font.PLAIN, 30));
+            g.drawString("Lives: " + getLives(), 20, 40);
+            
+            // render paused screen
+            if (isPaused()) {
+                g.setColor(new Color(0, 0, 0, 100));
+                g.fillRect(0, 0, getWidth(), getHeight());
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Century Gothic", Font.BOLD, 40));
+                g.drawString("PAUSED", 328, 300);
+            }
+            
+            // render game over screen
+            if (isGameOver()) {
+                g.setColor(new Color(0, 0, 0, 100));
+                g.fillRect(0, 0, getWidth(), getHeight());
+                g.setColor(Color.RED);
+                g.setFont(new Font("Century Gothic", Font.BOLD, 40));
+                g.drawString("You got invaded!", 242, 300);
+            }
+            
             // actually render the whole scene
             bs.show();
             g.dispose();

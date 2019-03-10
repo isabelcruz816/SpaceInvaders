@@ -68,4 +68,8 @@ public class Animation {
     public BufferedImage getImageFrame(int column) {
         return image.getSubimage(width * column, 0, width, height);
     }
+    
+    public BufferedImage getCurrentImageFrame() {
+        return getImageFrame(frame);
+    }
 }

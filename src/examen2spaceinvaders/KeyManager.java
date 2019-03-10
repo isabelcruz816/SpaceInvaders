@@ -34,11 +34,12 @@ public class KeyManager implements KeyListener {
         pressedKeys = new boolean[256];
         
         // add keys that will be used by the game
-        keysInUse.add(KeyEvent.VK_UP);
         keysInUse.add(KeyEvent.VK_LEFT);
-        keysInUse.add(KeyEvent.VK_DOWN);
         keysInUse.add(KeyEvent.VK_RIGHT);
         keysInUse.add(KeyEvent.VK_P);
+        keysInUse.add(KeyEvent.VK_R);
+        keysInUse.add(KeyEvent.VK_C);
+        keysInUse.add(KeyEvent.VK_G);
         keysInUse.add(KeyEvent.VK_SPACE);
     }
 

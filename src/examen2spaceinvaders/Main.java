@@ -14,7 +14,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Game game = new Game("Tarea4 - Breaking Bad", 800, 600);
+        Game game = new Game("Space Invaders", 800, 600);
         game.start();
     } 
 }

@@ -20,6 +20,7 @@ public class Enemy extends Item {
     private Game game;
     private int velX;
     private boolean dead;
+    private Animation animation;
     
     /**
      * 
@@ -31,6 +32,7 @@ public class Enemy extends Item {
     public Enemy(int x, int y, int width, int height, Game game) {
         super(x, y, width, height);
         this.game = game;
+        this.animation = new Animation(Assets.alien, 109, 79, 0.5, 2);
         velX = 2;
     }
 
@@ -82,11 +84,14 @@ public class Enemy extends Item {
                 setBullet(null);
             }
         }
+        
+        // update animation
+        animation.update();
     }
 
     @Override
     public void render(Graphics g) {
-       g.drawImage(Assets.enemy, x, y, width, height, null);
+       g.drawImage(animation.getCurrentImageFrame(), x, y, width, height, null);
        if(getBullet() != null) {
            getBullet().render(g);
        }
