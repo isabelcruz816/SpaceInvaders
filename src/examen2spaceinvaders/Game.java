@@ -445,6 +445,7 @@ public class Game implements Runnable {
         if(getDestroyed() >= MAX_ENEMY_ROWS * MAX_ENEMY_COLUMNS) {
             initAliens();
             changes = 0;
+            direction = 1;
             setDestroyed(0);
         }
         
